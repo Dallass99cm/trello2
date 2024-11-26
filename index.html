@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body class="light-theme"> <!-- Classe default como light-theme -->
+
+  <!-- Header com o Toggle de Tema -->
+  <header class="header">
+    <label class="switch">
+      <input type="checkbox" id="theme-toggle">
+      <span class="slider"></span>
+    </label>
+  </header>
+
+  <div class="login-container">
+    <form id="login-form" class="login-form">
+      <h1 class="title">Acessar</h1>
+      <input type="email" id="email" placeholder="Digite seu email" required>
+      <span id="error-message" class="error-message hidden"></span>
+      <button type="submit">Acessar</button>
+    </form>
+  </div>
+
+  <script src="app.js"></script> <!-- Atualizado para app.js -->
+</body>
+</html>
