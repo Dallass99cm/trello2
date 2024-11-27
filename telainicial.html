@@ -4,36 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TaskBoard</title>
-  <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="css/dashboard.css">
 </head>
-<body class="light-theme">
+<body>
   <header class="header">
     <h1 class="title">TaskBoard</h1>
     <div class="header-actions">
-      <select id="board-dropdown">
-        <option value="" disabled selected>Selecionar Quadro</option>
-      </select>
+      <button id="show-boards-btn">Ver Quadros</button>
+      <button id="back-btn" class="hidden">Voltar</button> <!-- Botão de voltar -->
       <span id="user-name"></span>
       <button id="logout-btn">Logout</button>
-      <button id="show-boards-btn">Ver Quadros</button>
     </div>
   </header>
 
   <main class="main-container">
-    <div id="board-list" class="board-list hidden">
-      <!-- Quadros renderizados dinamicamente -->
+    <!-- Lista de quadros -->
+    <div id="board-list" class="board-list hidden"></div>
+
+    <!-- Controles do carrossel -->
+    <div class="carousel-controls hidden">
+      <button id="prev-page-btn" disabled>Anterior</button>
+      <button id="next-page-btn" disabled>Próximo</button>
     </div>
-    <div id="board-columns" class="board-columns hidden">
-      <!-- Colunas e tarefas renderizadas dinamicamente -->
-    </div>
+
+    <!-- Container inicial -->
     <div id="welcome-container" class="create-board-container">
       <h2>Bem-vindo ao TaskBoard</h2>
-      <p>Comece criando um novo quadro ou selecione um existente no menu acima.</p>
+      <p>Comece criando um novo quadro ou clique em "Ver Quadros" para visualizar os existentes.</p>
       <button id="create-first-board">+ Criar Primeiro Quadro</button>
     </div>
   </main>
 
-  <script type="module" src="./js/dashboard.js"></script>
+  <script type="module" src="js/dashboard.js"></script>
 </body>
 </html>

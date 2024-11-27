@@ -1,42 +1,180 @@
+/* Importando as fontes */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Open+Sans:wght@700&display=swap");
+
+/* Variáveis de cores */
+:root {
+  --primary-color: #219653; /* Verde para título e destaques */
+  --secondary-color: #f2935d; /* Laranja para botões */
+  --text-color: #333333; /* Texto principal */
+  --white: #ffffff; /* Branco */
+  --shadow-color: rgba(0, 0, 0, 0.1); /* Sombras leves */
+}
+
+/* Estilo global */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-color);
+  background-color: var(--white); /* Fundo branco */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header */
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  padding: 10px 20px;
+  background-color: var(--white);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px var(--shadow-color);
+}
+
+.header .title {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1.8rem;
+  color: var(--primary-color);
 }
 
 .header-actions {
-    display: flex;
-    gap: 15px;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-#board-dropdown {
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
+/* Botões */
+button {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  background-color: var(--secondary-color);
+  color: var(--white);
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.3s;
 }
 
-#logout-btn {
-    padding: 5px 10px;
-    background-color: #F2935D;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
+button:hover {
+  transform: scale(1.05); /* Aumenta ligeiramente ao passar o mouse */
+  background-color: #e67e47; /* Tom mais escuro de laranja */
 }
 
-#logout-btn:hover {
-    background-color: #FF8C66;
+button:active {
+  transform: scale(0.95); /* Diminui ligeiramente ao clicar */
 }
 
-#user-name {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 1rem;
-    color: #333;
-};
+/* Botão de voltar */
+#back-btn {
+  background-color: var(--primary-color);
+}
+
+#back-btn:hover {
+  background-color: #187d3b; /* Tom mais escuro de verde */
+}
+
+/* Container principal */
+.main-container {
+  padding: 20px;
+  text-align: center;
+  max-width: 800px;
+  width: 100%;
+}
+
+.create-board-container {
+  margin: 30px auto;
+  padding: 20px;
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 4px 10px var(--shadow-color);
+}
+
+.create-board-container h2 {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}
+
+.create-board-container p {
+  font-size: 1rem;
+  margin: 15px 0;
+}
+
+/* Lista de quadros */
+.board-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 colunas */
+  gap: 30px; /* Espaçamento maior entre os quadros */
+  justify-content: center;
+  width: 100%;
+  max-width: 800px; /* Limita a largura total */
+}
+
+.board-card {
+  background-color: var(--secondary-color);
+  color: var(--white);
+  width: 100%; /* Adapta à coluna */
+  height: 100px; /* Altura menor */
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1.15rem; /* Fonte aumentada em 15% */
+  cursor: pointer;
+  padding: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Garante que conteúdo não transborde */
+  word-wrap: break-word; /* Força quebra de palavras longas */
+  text-align: center;
+  text-overflow: ellipsis;
+}
+
+.board-card p {
+  margin: 0;
+  max-width: 100%; /* Limita a largura do texto */
+  line-height: 1.3; /* Ajusta o espaçamento entre linhas */
+  overflow: hidden;
+  white-space: pre-wrap; /* Permite quebra de linhas longas */
+}
+
+.board-card:hover {
+  transform: scale(1.05); /* Aumenta ligeiramente ao passar o mouse */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+.board-card:active {
+  transform: scale(0.95); /* Diminui ligeiramente ao clicar */
+}
+
+/* Controles do carrossel */
+.carousel-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.carousel-controls button {
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.carousel-controls button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Ocultar elementos */
+.hidden {
+  display: none;
+}
