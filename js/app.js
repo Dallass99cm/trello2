@@ -2,94 +2,94 @@ const API_BASE_URL = "https://personal-ga2xwx9j.outsystemscloud.com/TaskBoard_CS
 const loginForm = document.getElementById("login-form");
 const emailInput = document.getElementById("email");
 const errorMessage = document.getElementById("error-message");
-const themeToggleButton = document.getElementById("theme-toggle");
+const themeToggle = document.getElementById("theme-toggle");
 
-// Adiciona o evento de alternância de tema
-themeToggleButton.addEventListener("change", toggleTheme);
+// Carregar tema salvo
+const savedTheme = localStorage.getItem("theme") || "light-theme";
+document.body.classList.add(savedTheme);
+updateThemeToggle(savedTheme === "dark-theme");
 
-// Verifica a preferência de tema ao carregar a página
-document.addEventListener("DOMContentLoaded", () => {
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme) {
-    document.body.classList.remove("light-theme", "dark-theme");
-    document.body.classList.add(savedTheme);
-    themeToggleButton.checked = savedTheme === "dark-theme"; // Define o estado do toggle
-  } else {
-    document.body.classList.add("light-theme");
-    themeToggleButton.checked = false;
-  }
+// Toggle de tema
+themeToggle.addEventListener("click", () => {
+  const isDark = document.body.classList.contains("dark-theme");
+  document.body.classList.remove(isDark ? "dark-theme" : "light-theme");
+  document.body.classList.add(isDark ? "light-theme" : "dark-theme");
+  localStorage.setItem("theme", isDark ? "light-theme" : "dark-theme");
+  updateThemeToggle(!isDark);
 });
 
-// Função para alternar entre o tema light e dark
-function toggleTheme() {
-  const currentTheme = document.body.classList.contains("light-theme") ? "light-theme" : "dark-theme";
-  const newTheme = currentTheme === "light-theme" ? "dark-theme" : "light-theme";
-  
-  document.body.classList.remove(currentTheme);
-  document.body.classList.add(newTheme);
-
-  localStorage.setItem("theme", newTheme);
+// Função para atualizar ícone do toggle
+function updateThemeToggle(isDark) {
+  themeToggle.textContent = isDark ? "☀️" : "🌙";
 }
 
+// Validação do email
+function validateEmail(email) {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailPattern.test(email);
+}
+
+// Mostrar erro
+function showError(message) {
+  errorMessage.textContent = message;
+  errorMessage.classList.remove("hidden");
+  emailInput.classList.add("error");
+}
+
+// Limpar erro
+function clearError() {
+  errorMessage.classList.add("hidden");
+  emailInput.classList.remove("error");
+}
+
+// Handler do formulário
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+  clearError();
 
   const email = emailInput.value.trim();
-  console.log("Email informado:", email);
-
   if (!validateEmail(email)) {
     showError("Por favor, informe um email válido.");
     return;
   }
 
   const submitButton = loginForm.querySelector("button");
-  disableButton(submitButton, true);
+  submitButton.disabled = true;
+  submitButton.textContent = "Entrando...";
 
   try {
-    const url = `${API_BASE_URL}/People?Email=${encodeURIComponent(email)}`;
-    const response = await fetch(url);
+    const response = await fetch(
+      `${API_BASE_URL}/People?Email=${encodeURIComponent(email)}`
+    );
 
     if (!response.ok) {
-      if (response.status === 404) {
-        showError("Email não encontrado. Verifique e tente novamente.");
-      } else {
-        showError("Erro ao validar o email. Tente novamente.");
-      }
-      return;
+      throw new Error(response.status === 404 
+        ? "Email não encontrado." 
+        : "Erro ao validar o email."
+      );
     }
 
     const users = await response.json();
     const user = users.find(u => u.Email.toLowerCase() === email.toLowerCase());
 
     if (!user) {
-      showError("Usuário não encontrado. Verifique o email informado.");
-      return;
+      throw new Error("Usuário não encontrado.");
     }
 
-    localStorage.setItem("user", JSON.stringify({ id: user.Id, email: user.Email }));
+    localStorage.setItem("user", JSON.stringify({ 
+      id: user.Id, 
+      email: user.Email 
+    }));
+    
     window.location.href = "telainicial.html";
 
   } catch (error) {
-    showError("Não foi possível conectar ao servidor. Tente novamente.");
+    showError(error.message);
   } finally {
-    disableButton(submitButton, false);
+    submitButton.disabled = false;
+    submitButton.textContent = "Acessar";
   }
 });
 
-// Função para validar o email com regex
-function validateEmail(email) {
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailPattern.test(email);
-}
-
-// Função para desativar ou ativar o botão
-function disableButton(button, disable) {
-  button.disabled = disable;
-  button.textContent = disable ? "Carregando..." : "Acessar";
-}
-
-// Função para exibir mensagens de erro
-function showError(message) {
-  errorMessage.textContent = message;
-  errorMessage.classList.remove("hidden");
-}
+// Limpar erro ao digitar
+emailInput.addEventListener("input", clearError);

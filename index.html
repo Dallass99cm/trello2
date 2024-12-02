@@ -1,31 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
-  <!-- Alterado para apontar para a pasta css -->
+  <title>Corinthians - Login</title>
   <link rel="stylesheet" href="css/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="light-theme"> <!-- Classe default como light-theme -->
-
+<body class="light-theme">
   <header class="header">
-    <label class="switch">
-      <input type="checkbox" id="theme-toggle">
-      <span class="slider"></span>
-    </label>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Alternar tema">🌙</button>
   </header>
 
   <div class="login-container">
-    <form id="login-form" class="login-form">
-      <h1 class="title">Acessar</h1>
-      <input type="email" id="email" placeholder="Digite seu email" required>
-      <span id="error-message" class="error-message hidden"></span>
-      <button type="submit">Acessar</button>
-    </form>
+    <div class="login-box">
+      <img src="corinthians-logo.png" alt="Corinthians" class="title-logo">
+      <form id="login-form" class="login-form">
+        <div class="input-group">
+          <input 
+            type="email" 
+            id="email" 
+            placeholder="Digite seu email"
+            required 
+            autocomplete="email"
+          >
+        </div>
+        <button type="submit">Acessar</button>
+        <span id="error-message" class="error-message hidden"></span>
+      </form>
+    </div>
   </div>
 
-  <!-- Alterado para apontar para a pasta js -->
-  <script src="js/app.js"></script> <!-- Atualizado para app.js -->
+  <script src="js/app.js"></script>
 </body>
 </html>

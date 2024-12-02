@@ -1,39 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TaskBoard</title>
+  <title>Dashboard</title>
   <link rel="stylesheet" href="css/dashboard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header class="header">
-    <h1 class="title">TaskBoard</h1>
-    <div class="header-actions">
-      <button id="show-boards-btn">Ver Quadros</button>
-      <button id="back-btn" class="hidden">Voltar</button> <!-- Botão de voltar -->
-      <span id="user-name"></span>
-      <button id="logout-btn">Logout</button>
+  <nav class="nav">
+    <div class="nav-left">
+      <img src="corinthians-logo.png" alt="Logo" class="logo">
     </div>
-  </header>
-
-  <main class="main-container">
-    <!-- Lista de quadros -->
-    <div id="board-list" class="board-list hidden"></div>
-
-    <!-- Controles do carrossel -->
-    <div class="carousel-controls hidden">
-      <button id="prev-page-btn" disabled>Anterior</button>
-      <button id="next-page-btn" disabled>Próximo</button>
+    <div class="nav-right">
+      <button id="themeBtn" class="icon-button">🌙</button>
+      <button id="logoutBtn" class="logout-button">Logout</button>
     </div>
+  </nav>
 
-    <!-- Container inicial -->
-    <div id="welcome-container" class="create-board-container">
-      <h2>Bem-vindo ao TaskBoard</h2>
-      <p>Comece criando um novo quadro ou clique em "Ver Quadros" para visualizar os existentes.</p>
-      <button id="create-first-board">+ Criar Primeiro Quadro</button>
-    </div>
-  </main>
+  <div class="main-container">
+    <aside class="sidebar">
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Pesquisar quadros..." class="search-input">
+      </div>
+      <div id="boardsList" class="boards-list">
+        <!-- Quadros serão inseridos aqui -->
+      </div>
+      <button id="newBoardBtn" class="new-board-button">+ Novo Quadro</button>
+    </aside>
+
+    <main class="content">
+      <div id="welcomeMessage" class="welcome-message">
+        <h1>Selecione um quadro</h1>
+        <p>Escolha um quadro da lista ou crie um novo para começar</p>
+      </div>
+      <div id="tasksContainer" class="tasks-container hidden">
+        <!-- Tarefas serão inseridas aqui -->
+      </div>
+    </main>
+  </div>
 
   <script type="module" src="js/dashboard.js"></script>
 </body>
