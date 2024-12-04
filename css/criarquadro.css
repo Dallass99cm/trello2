@@ -148,3 +148,86 @@ body.dark #closePopupBtn {
 body.dark #closePopupBtn:hover {
     background-color: var(--bg-dark);
 }
+
+.color-picker {
+    margin-bottom: 30px;
+}
+
+.color-picker h3 {
+    font-size: 16px;
+    margin-bottom: 16px;
+    color: var(--text-light);
+}
+
+.color-options {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.color-option {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+    position: relative;
+}
+
+.color-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.color-option.selected {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.custom-color {
+    overflow: hidden;
+    background: none !important;
+    border-radius: 50% !important;
+}
+
+#colorPicker {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+}
+
+#colorPicker::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border-radius: 50%;
+}
+
+#colorPicker::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+body.dark .color-picker h3 {
+    color: var(--text-dark);
+}
+
+body.dark .color-option:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.color-picker-container {
+    background-color: var(--surface-light);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+body.dark .color-picker-container {
+    background-color: var(--surface-dark);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}

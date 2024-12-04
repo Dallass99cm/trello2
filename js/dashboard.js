@@ -153,3 +153,11 @@ loadBoards();
 if (!localStorage.getItem('user')) {
     window.location.href = 'index.html';
 }
+
+// Adicione isso junto com os outros event listeners
+document.addEventListener('boardsUpdated', () => {
+    loadBoards();
+});
+
+// E torne a função loadBoards acessível para outros módulos
+export { loadBoards };
