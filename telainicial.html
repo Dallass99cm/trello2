@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
   <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/criarquadro.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -30,16 +31,25 @@
     </aside>
 
     <main class="content">
-      <div id="welcomeMessage" class="welcome-message">
-        <h1>Selecione um quadro</h1>
-        <p>Escolha um quadro da lista ou crie um novo para começar</p>
-      </div>
-      <div id="tasksContainer" class="tasks-container hidden">
-        <!-- Tarefas serão inseridas aqui -->
-      </div>
+      <div id="taskDetailsArea" class="task-details-area hidden"></div>
     </main>
   </div>
 
+  <!-- Container para o popup -->
+  <div id="criarQuadroContainer"></div>
+
   <script type="module" src="js/dashboard.js"></script>
+  <script type="module" src="js/criarquadro.js"></script>
+  <script>
+    fetch('criarquadro.html')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('criarQuadroContainer').innerHTML = html;
+            setTimeout(() => {
+                const event = new Event('DOMContentLoaded');
+                document.dispatchEvent(event);
+            }, 100);
+        });
+  </script>
 </body>
 </html>

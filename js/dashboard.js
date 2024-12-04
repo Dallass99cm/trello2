@@ -23,87 +23,93 @@ async function loadBoards() {
 }
 
 // Função para renderizar os quadros com estrutura em árvore
-function renderBoards(boardsToShow) {
+async function renderBoards(boardsToShow) {
     boardsList.innerHTML = '';
     
-    boardsToShow.forEach(board => {
-        // Criar container principal do quadro (inclui quadro + tarefas)
+    for (const board of boardsToShow) {
         const boardContainer = document.createElement('div');
         boardContainer.className = 'board-container';
-
-        // Criar elemento do quadro
+        
         const boardElement = document.createElement('div');
         boardElement.className = 'board-item';
         boardElement.innerHTML = `
             <img src="images/folder-closed.png" alt="Pasta" class="folder-icon">
             <span>${board.Name}</span>
         `;
-
-        // Criar container para as tarefas (inicialmente oculto)
-        const tasksContainer = document.createElement('div');
-        tasksContainer.className = 'tasks-tree hidden';
         
-        // Adicionar evento de clique no quadro
         boardElement.addEventListener('click', async () => {
-            const isExpanded = !tasksContainer.classList.contains('hidden');
-            
-            // Remove active de todos os outros quadros
-            document.querySelectorAll('.board-item').forEach(item => {
-                item.classList.remove('active');
-                item.querySelector('.folder-icon').src = 'images/folder-closed.png';
-            });
-            
-            if (!isExpanded) {
-                // Expande o quadro
+            try {
+                // Remove active de outros quadros
+                document.querySelectorAll('.board-item').forEach(item => {
+                    item.classList.remove('active');
+                    item.querySelector('.folder-icon').src = 'images/folder-closed.png';
+                });
+                
+                // Atualiza o estado do quadro atual
                 boardElement.classList.add('active');
                 boardElement.querySelector('.folder-icon').src = 'images/folder-open.png';
                 
-                // Carrega e mostra as tarefas
-                try {
-                    const columns = await requests.GetColumnsByBoardId(board.Id);
-                    tasksContainer.innerHTML = '';
+                // Carrega as colunas
+                const columns = await requests.GetColumnsByBoardId(board.Id);
+                const taskDetailsArea = document.getElementById('taskDetailsArea');
+                
+                // Monta o HTML das colunas
+                let columnsHTML = '';
+                
+                for (const col of columns) {
+                    const tasks = await requests.GetTasksByColumnId(col.Id);
                     
-                    for (const column of columns) {
-                        const tasks = await requests.GetTasksByColumnId(column.Id);
-                        const columnElement = document.createElement('div');
-                        columnElement.className = 'column-tree';
-                        columnElement.innerHTML = `
-                            <div class="column-header-tree">
-                                <img src="images/archive-icon.png" alt="Arquivo" class="task-icon">
-                                <span>${column.Name}</span>
+                    columnsHTML += `
+                        <div class="board-column">
+                            <div class="column-header">
+                                <h3>
+                                    ${col.Name}
+                                    <span class="task-count">${tasks.length}</span>
+                                </h3>
                             </div>
-                            <div class="tasks-list-tree">
-                                ${tasks.length === 0 ? 
-                                    '<div class="task-item-tree">Nenhuma tarefa</div>' :
-                                    tasks.map(task => `
-                                        <div class="task-item-tree" data-task='${JSON.stringify(task)}'>
-                                            <img src="images/document-icon.png" alt="Documento" class="task-icon">
-                                            ${task.Description}
+                            <div class="column-tasks">
+                                ${tasks.map(task => `
+                                    <div class="task-item">
+                                        <div class="task-description">${task.Description}</div>
+                                        <div class="task-badges">
+                                            <span class="task-badge">ID: ${task.Id}</span>
+                                            <span class="task-badge">${task.Status || 'Em andamento'}</span>
                                         </div>
-                                    `).join('')
-                                }
+                                    </div>
+                                `).join('')}
+                                <div class="add-card-button">
+                                    + Adicionar um cartão
+                                </div>
                             </div>
-                        `;
-                        tasksContainer.appendChild(columnElement);
-                    }
-                    
-                    tasksContainer.classList.remove('hidden');
-                } catch (error) {
-                    console.error('Erro ao carregar tarefas:', error);
+                        </div>
+                    `;
                 }
-            } else {
-                // Recolhe o quadro
-                boardElement.classList.remove('active');
-                boardElement.querySelector('.folder-icon').src = 'images/folder-closed.png';
-                tasksContainer.classList.add('hidden');
+                
+                // Atualiza o painel direito
+                taskDetailsArea.innerHTML = `
+                    <div class="board-panel">
+                        <div class="board-panel-header">
+                            <h2>
+                                <img src="images/folder-open.png" alt="Pasta" class="folder-icon">
+                                ${board.Name}
+                            </h2>
+                        </div>
+                        <div class="board-columns">
+                            ${columnsHTML}
+                        </div>
+                    </div>
+                `;
+                
+                taskDetailsArea.classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Erro ao carregar conteúdo do quadro:', error);
             }
         });
-
-        // Montar a estrutura
+        
         boardContainer.appendChild(boardElement);
-        boardContainer.appendChild(tasksContainer);
         boardsList.appendChild(boardContainer);
-    });
+    }
 }
 
 // Função para alternar o tema
@@ -129,24 +135,10 @@ function handleSearch(event) {
     renderBoards(filteredBoards);
 }
 
-// Função para criar novo quadro
-async function createNewBoard() {
-    const name = prompt('Digite o nome do novo quadro:');
-    if (!name) return;
-    
-    try {
-        await requests.CreateBoard({ Name: name });
-        await loadBoards();
-    } catch (error) {
-        console.error('Erro ao criar quadro:', error);
-    }
-}
-
 // Adiciona os event listeners
 themeBtn.addEventListener('click', toggleTheme);
 logoutBtn.addEventListener('click', logout);
 searchInput.addEventListener('input', handleSearch);
-newBoardBtn.addEventListener('click', createNewBoard);
 
 // Carrega o tema inicial
 if (localStorage.getItem('theme') === 'dark') {
@@ -161,62 +153,3 @@ loadBoards();
 if (!localStorage.getItem('user')) {
     window.location.href = 'index.html';
 }
-
-// Adicione o evento de clique após criar o elemento
-const columnElement = document.createElement('div');
-columnElement.className = 'column-tree';
-columnElement.innerHTML = `
-    <div class="column-header-tree">
-        <img src="images/archive-icon.png" alt="Arquivo" class="task-icon">
-        <span>${column.Name}</span>
-    </div>
-    <div class="tasks-list-tree">
-        ${tasks.length === 0 ? 
-            '<div class="task-item-tree">Nenhuma tarefa</div>' :
-            tasks.map(task => `
-                <div class="task-item-tree" data-task='${JSON.stringify(task)}'>
-                    <img src="images/document-icon.png" alt="Documento" class="task-icon">
-                    ${task.Description}
-                </div>
-            `).join('')
-        }
-    </div>
-`;
-
-// Adicione o evento de clique após criar o elemento
-columnElement.querySelectorAll('.task-item-tree').forEach(taskElement => {
-    taskElement.addEventListener('click', (e) => {
-        const task = JSON.parse(e.currentTarget.dataset.task);
-        const mainContent = document.querySelector('.content');
-        
-        // Cria ou atualiza a área de detalhes
-        let taskDetailsArea = document.querySelector('.task-details-area');
-        if (!taskDetailsArea) {
-            taskDetailsArea = document.createElement('div');
-            taskDetailsArea.className = 'task-details-area';
-            mainContent.appendChild(taskDetailsArea);
-        }
-
-        taskDetailsArea.innerHTML = `
-            <div class="task-details">
-                <div class="task-details-header">
-                    <h2>
-                        <img src="images/document-icon.png" alt="Documento" class="task-icon">
-                        ${task.Description}
-                    </h2>
-                </div>
-                <div class="task-details-content">
-                    <div class="task-info">
-                        <p><strong>ID:</strong> ${task.Id}</p>
-                        <p><strong>Status:</strong> ${task.Status || 'Em andamento'}</p>
-                        <p><strong>Criado em:</strong> ${new Date(task.CreatedOn).toLocaleDateString()}</p>
-                    </div>
-                    <div class="task-actions">
-                        <button class="task-button edit">Editar</button>
-                        <button class="task-button delete">Excluir</button>
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-});
