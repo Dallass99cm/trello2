@@ -135,6 +135,10 @@
     gap: 1.5rem;
   }
   
+  .login-form.hidden {
+    display: none;
+  }
+  
   .input-group {
     position: relative;
     opacity: 0;

@@ -6,7 +6,7 @@ window.handleCreateColumn = async function(boardId) {
         const closeBtn = document.getElementById('closeCriarColunaBtn');
         const cancelBtn = document.getElementById('cancelCriarColunaBtn');
         const saveBtn = document.getElementById('saveCriarColunaBtn');
-        const nameInput = document.getElementById('columnName');
+        const nameInput = document.getElementById('newColumnName');
         
         if (!overlay || !closeBtn || !saveBtn || !cancelBtn || !nameInput) {
             throw new Error('Elementos do formulário não encontrados');
