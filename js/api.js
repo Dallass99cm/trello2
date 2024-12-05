@@ -81,32 +81,37 @@ const requests = {
         return await response.json();
     },
     UpdateColumn: async (columnData) => {
-        console.log('Enviando dados para atualização:', columnData);
-        
-        const requestData = {
-            Id: columnData.Id,
-            Name: columnData.Name,
-            BoardId: columnData.BoardId,
-            IsActive: true,
-            Position: columnData.Position
-        };
+        try {
+            console.log('Enviando requisição PUT para atualizar coluna:', columnData);
+            
+            const response = await fetch(`${BASE_URL}/Column`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(columnData)
+            });
 
-        console.log('Dados formatados para API:', requestData);
+            console.log('Status da resposta:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Erro ao atualizar coluna:', {
+                    status: response.status,
+                    text: errorText
+                });
+                throw new Error(`Falha ao atualizar coluna: ${errorText}`);
+            }
 
-        const response = await fetch(`${BASE_URL}/Column`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData)
-        });
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Erro na API: ${errorText}`);
+            // Tenta ler o corpo da resposta
+            const responseText = await response.text();
+            console.log('Resposta da API:', responseText);
+
+            return true;
+        } catch (error) {
+            console.error('Erro ao atualizar coluna:', error);
+            throw error;
         }
-        
-        return response;
     },
     DeleteColumn: async (columnId) => {
         try {

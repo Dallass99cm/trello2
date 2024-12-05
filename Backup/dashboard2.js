@@ -63,14 +63,14 @@ async function renderBoards(boardsToShow) {
                                     <span class="task-count">${tasks.length}</span>
                                 </h3>
                                 <div class="column-actions">
-                                    <button onclick="handleEditColumn(event)" class="edit-column-btn" data-id="${col.Id}">
+                                    <button class="edit-column-btn" data-id="${col.Id}" data-name="${col.Name}" data-board-id="${board.Id}">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                         </svg>
                                         Editar
                                     </button>
-                                    <button onclick="handleDeleteColumn(event)" class="delete-column-btn" data-column-id="${col.Id}">
+                                    <button class="delete-column-btn" data-column-id="${col.Id}">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M3 6h18"></path>
                                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
@@ -123,9 +123,66 @@ async function renderBoards(boardsToShow) {
                 
                 // Adiciona event listeners para os botões
                 document.querySelectorAll('.edit-column-btn').forEach(button => {
-                    button.addEventListener('click', handleEditColumn);
+                    button.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        
+                        const columnId = button.dataset.id;
+                        const columnName = button.dataset.name;
+                        const boardId = button.dataset.boardId;
+                        
+                        const overlay = document.getElementById('editarColunaOverlay');
+                        const nameInput = document.getElementById('editColumnName');
+                        const saveBtn = document.getElementById('saveColumnBtn');
+                        const closeBtn = document.getElementById('closeEditarColunaBtn');
+                        const cancelBtn = document.getElementById('cancelEditColumnBtn');
+                        
+                        const closePopup = () => {
+                            overlay.style.display = 'none';
+                            overlay.classList.remove('active');
+                            nameInput.value = '';
+                        };
+                        
+                        // Adiciona event listeners para fechar o popup
+                        closeBtn.onclick = closePopup;
+                        cancelBtn.onclick = closePopup;
+                        
+                        nameInput.value = columnName;
+                        overlay.style.display = 'flex';
+                        overlay.classList.add('active');
+                        nameInput.focus();
+                        
+                        saveBtn.onclick = async () => {
+                            const newName = nameInput.value.trim();
+                            if (!newName) {
+                                alert('Por favor, insira um nome para a coluna');
+                                return;
+                            }
+                            
+                            try {
+                                await requests.UpdateColumn({
+                                    Id: parseInt(columnId),
+                                    Name: newName,
+                                    BoardId: parseInt(boardId),
+                                    IsActive: true,
+                                    Position: 0
+                                });
+                                
+                                overlay.style.display = 'none';
+                                overlay.classList.remove('active');
+                                
+                                const activeBoard = document.querySelector('.board-item.active');
+                                if (activeBoard) {
+                                    activeBoard.click();
+                                }
+                            } catch (error) {
+                                console.error('Erro ao salvar:', error);
+                                alert('Erro ao salvar as alterações');
+                            }
+                        };
+                    });
                 });
-
+                
                 // Adiciona event listeners para os botões de excluir
                 document.querySelectorAll('.delete-column-btn').forEach(button => {
                     button.addEventListener('click', handleDeleteColumn);
@@ -198,137 +255,3 @@ document.addEventListener('boardsUpdated', () => {
 
 // E torne a função loadBoards acessível para outros módulos
 export { loadBoards };
-
-window.handleEditColumn = async function(event) {
-    event.stopPropagation();
-    const columnElement = event.target.closest('.column');
-    const columnId = event.target.closest('.edit-column-btn').dataset.id;
-    const columnName = columnElement.querySelector('h3').textContent.trim().replace(/\d+/g, '').trim();
-    
-    const boardPanel = document.querySelector('.board-panel');
-    const boardId = boardPanel.dataset.boardId;
-    
-    console.log('BoardId:', boardId, 'ColumnId:', columnId);
-    
-    try {
-        // Inserir o HTML diretamente ao invés de carregar de um arquivo
-        const html = `
-            <div id="editarColunaOverlay" class="popup-overlay" style="background: transparent !important;">
-                <div class="popup-content">
-                    <div class="popup-header">
-                        <h2>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                            </svg>
-                            Editar Coluna
-                        </h2>
-                        <button id="closeEditarColunaBtn" class="close-button">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M18 6L6 18"></path>
-                                <path d="M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="popup-body">
-                        <div class="form-group">
-                            <label for="columnName">Nome da Coluna</label>
-                            <input type="text" id="columnName" class="form-input" placeholder="Digite o nome da coluna" required>
-                            <small class="form-help">O nome ajuda a identificar o propósito desta coluna no quadro.</small>
-                        </div>
-                    </div>
-                    <div class="popup-footer">
-                        <button id="cancelEditColumnBtn" class="secondary-button">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M18 6L6 18"></path>
-                                <path d="M6 6l12 12"></path>
-                            </svg>
-                            Cancelar
-                        </button>
-                        <button id="saveColumnBtn" class="primary-button">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                                <polyline points="7 3 7 8 15 8"></polyline>
-                            </svg>
-                            Salvar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        document.getElementById('criarQuadroContainer').insertAdjacentHTML('beforeend', html);
-        
-        // Aguarda o próximo ciclo do event loop para garantir que o DOM foi atualizado
-        await new Promise(resolve => setTimeout(resolve, 50));
-        
-        const overlay = document.getElementById('editarColunaOverlay');
-        if (!overlay) {
-            throw new Error('Elemento overlay não encontrado');
-        }
-        
-        const closeBtn = document.getElementById('closeEditarColunaBtn');
-        const saveBtn = document.getElementById('saveColumnBtn');
-        const cancelBtn = document.getElementById('cancelEditColumnBtn');
-        const nameInput = document.getElementById('columnName');
-        
-        if (!nameInput || !closeBtn || !saveBtn || !cancelBtn) {
-            throw new Error('Elementos do formulário não encontrados');
-        }
-        
-        // Define o valor do input
-        nameInput.value = columnName;
-        
-        // Mostra o overlay
-        overlay.style.display = 'flex';
-        requestAnimationFrame(() => {
-            overlay.classList.add('active');
-        });
-        
-        const closePopup = () => {
-            overlay.classList.remove('active');
-            setTimeout(() => {
-                overlay.remove();
-            }, 300);
-        };
-        
-        closeBtn.addEventListener('click', closePopup);
-        cancelBtn.addEventListener('click', closePopup);
-        
-        saveBtn.addEventListener('click', async () => {
-            try {
-                const newName = nameInput.value.trim();
-                if (!newName) {
-                    alert('Por favor, insira um nome para a coluna');
-                    return;
-                }
-                
-                const columnData = {
-                    Id: parseInt(columnId),
-                    Name: newName,
-                    BoardId: parseInt(boardId),
-                    IsActive: true,
-                    Position: parseInt(columnElement.dataset.position || '0')
-                };
-                
-                console.log('Dados para atualização:', columnData);
-                
-                await requests.UpdateColumn(columnData);
-                closePopup();
-                
-                const activeBoard = document.querySelector('.board-item.active');
-                if (activeBoard) {
-                    activeBoard.click();
-                }
-            } catch (error) {
-                console.error('Erro ao salvar coluna:', error);
-                alert('Erro ao salvar as alterações');
-            }
-        });
-        
-    } catch (error) {
-        console.error('Erro ao editar coluna:', error);
-        alert('Erro ao carregar o formulário de edição');
-    }
-};
