@@ -82,7 +82,7 @@ loginForm.addEventListener("submit", async (event) => {
     }));
     
     window.location.href = "telainicial.html";
-    document.querySelector(".login-form").classList.add("hidden");
+
   } catch (error) {
     showError(error.message);
   } finally {
