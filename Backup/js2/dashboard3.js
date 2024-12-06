@@ -138,23 +138,13 @@ async function renderBoards(boardsToShow) {
                                 <img src="images/folder-open.png" alt="Pasta" class="folder-icon">
                                 ${board.Name}
                             </h2>
-                            <div class="board-actions">
-                                <button class="delete-board-btn" data-board-id="${board.Id}">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M3 6h18"></path>
-                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
-                                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                    </svg>
-                                    Excluir Quadro
-                                </button>
-                                <button class="add-column-btn" data-board-id="${board.Id}">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M12 5v14"></path>
-                                        <path d="M5 12h14"></path>
-                                    </svg>
-                                    Nova Coluna
-                                </button>
-                            </div>
+                            <button class="add-column-btn" data-board-id="${board.Id}">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 5v14"></path>
+                                    <path d="M5 12h14"></path>
+                                </svg>
+                                Nova Coluna
+                            </button>
                         </div>
                         <div class="columns-container">
                             ${columnsHTML.join('')}
@@ -277,36 +267,6 @@ async function renderBoards(boardsToShow) {
                         });
                     }
                 });
-                
-                // Após renderizar o conteúdo do board
-                const deleteBoardBtn = taskDetailsArea.querySelector('.delete-board-btn');
-                if (deleteBoardBtn) {
-                    deleteBoardBtn.addEventListener('click', async () => {
-                        const boardId = deleteBoardBtn.getAttribute('data-board-id');
-                        
-                        if (confirm('Tem certeza que deseja excluir este quadro? Todas as colunas e tarefas serão excluídas permanentemente.')) {
-                            try {
-                                await requests.DeleteBoard(boardId);
-                                
-                                // Limpa a área de detalhes
-                                taskDetailsArea.innerHTML = '';
-                                taskDetailsArea.classList.add('hidden');
-                                
-                                // Remove o quadro da lista
-                                const boardItem = document.querySelector(`.board-item[data-board-id="${boardId}"]`);
-                                if (boardItem) {
-                                    boardItem.closest('.board-container').remove();
-                                }
-                                
-                                // Recarrega a lista de quadros
-                                loadBoards();
-                            } catch (error) {
-                                console.error('Erro ao excluir quadro:', error);
-                                alert('Erro ao excluir o quadro');
-                            }
-                        }
-                    });
-                }
                 
             } catch (error) {
                 console.error('Erro ao carregar conteúdo do quadro:', error);

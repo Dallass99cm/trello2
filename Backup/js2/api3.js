@@ -67,20 +67,10 @@ const requests = {
         return response;
     },
     DeleteBoard: async (boardId) => {
-        try {
-            const response = await fetch(`${BASE_URL}/Board?BoardId=${boardId}`, {
-                method: 'DELETE'
-            });
-            
-            if (!response.ok) {
-                throw new Error('Falha ao excluir quadro');
-            }
-            
-            return true;
-        } catch (error) {
-            console.error('Erro ao excluir quadro:', error);
-            throw error;
-        }
+        const response = await fetch(`${BASE_URL}/Board?BoardId=${boardId}`, {
+            method: 'DELETE'
+        });
+        return response;
     },
     GetBoardById: async (boardId) => {
         const response = await fetch(`${BASE_URL}/Board?BoardId=${boardId}`);

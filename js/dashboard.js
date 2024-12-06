@@ -109,8 +109,10 @@ async function renderBoards(boardsToShow) {
                                                         </svg>
                                                         Editar
                                                     </div>
-                                                    <div class="task-menu-separator"></div>
-                                                    <div class="task-menu-item delete-task" data-task-id="${task.Id}">
+                                                    <div class="task-menu-item delete-task" 
+                                                        data-column-id="${col.Id}"
+                                                        data-task-id="${task.Id}"
+                                                    >
                                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                             <path d="M3 6h18"></path>
                                                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
@@ -317,7 +319,7 @@ async function renderBoards(boardsToShow) {
                     });
                 }
                 
-                // Junto com os outros event listeners após renderizar o conteúdo
+                // Adicione este trecho após o código que adiciona os event listeners existentes
                 document.querySelectorAll('.delete-task').forEach(item => {
                     item.onclick = async (e) => {
                         e.preventDefault();
@@ -325,30 +327,19 @@ async function renderBoards(boardsToShow) {
                         
                         const taskId = item.dataset.taskId;
                         
-                        try {
-                            // Captura as referências antes de excluir
-                            const taskElement = item.closest('.task');
-                            const column = taskElement.closest('.column');
-                            const taskCount = column.querySelector('.task-count');
-                            const currentCount = parseInt(taskCount.textContent);
-                            
-                            // Executa a exclusão na API
-                            await requests.DeleteTask(taskId);
-                            
-                            // Fecha o menu
-                            const menu = item.closest('.task-menu');
-                            menu.classList.remove('active');
-                            
-                            // Atualiza o contador
-                            taskCount.textContent = currentCount - 1;
-                            
-                            // Remove a tarefa da interface por último
-                            taskElement.remove();
-                            
-                            console.log('Tarefa excluída com sucesso');
-                        } catch (error) {
-                            console.error('Erro ao excluir tarefa:', error);
-                            alert('Erro ao excluir a tarefa');
+                        if (confirm('Tem certeza que deseja excluir esta tarefa?')) {
+                            try {
+                                await requests.DeleteTask(taskId);
+                                
+                                // Recarrega o quadro atual
+                                const activeBoard = document.querySelector('.board-item.active');
+                                if (activeBoard) {
+                                    activeBoard.click();
+                                }
+                            } catch (error) {
+                                console.error('Erro ao excluir tarefa:', error);
+                                alert('Erro ao excluir a tarefa');
+                            }
                         }
                     };
                 });
