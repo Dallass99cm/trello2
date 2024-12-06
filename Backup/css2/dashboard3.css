@@ -882,22 +882,6 @@ body.dark .form-input:focus {
 .due-date {
     color: #6B7280;
     font-size: 12px;
-    padding: 4px 8px;
-    background: #F3F4F6;
-    border-radius: 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.due-date::before {
-    content: '📅';
-    font-size: 14px;
-}
-
-body.dark .due-date {
-    background: #374151;
-    color: #9CA3AF;
 }
 
 .edit-task-btn {
@@ -921,15 +905,6 @@ body.dark .due-date {
 .edit-task-btn svg {
     width: 16px;
     height: 16px;
-    transition: transform 0.2s ease;
-}
-
-.edit-task-btn:hover svg {
-    transform: scale(1.1);
-}
-
-body.dark .edit-task-btn:hover {
-    background: rgba(255, 255, 255, 0.05);
 }
 
 /* Menu de contexto da tarefa */
@@ -944,18 +919,6 @@ body.dark .edit-task-btn:hover {
     min-width: 160px;
     display: none;
     z-index: 10;
-    animation: menuAppear 0.2s ease-out;
-}
-
-@keyframes menuAppear {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .task-menu.active {
@@ -986,7 +949,6 @@ body.dark .edit-task-btn:hover {
 body.dark .task-menu {
     background: #1F2937;
     border-color: #374151;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 body.dark .task-menu-item:hover {
