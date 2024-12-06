@@ -1,4 +1,5 @@
 import requests from './api.js';
+import { handleManageTask, handleTaskMenu, handleDeleteTask } from './gerenciartarefa.js';
 
 // Captura elementos do DOM
 const themeBtn = document.getElementById('themeBtn');
@@ -85,32 +86,29 @@ async function renderBoards(boardsToShow) {
                                     <div class="task">
                                         <div class="task-header">
                                             <h4>${task.Title}</h4>
-                                            <button class="edit-task-btn" onclick="handleTaskMenu(event, this)" title="Opções da tarefa">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                    <path d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
-                                                </svg>
-                                            </button>
-                                            <div class="task-menu">
-                                                <div class="task-menu-item" onclick="handleManageTask(event, ${col.Id}, ${task.Id})" 
-                                                    data-title="${task.Title}"
-                                                    data-description="${task.Description || ''}"
-                                                    data-priority="${task.Priority || 1}"
-                                                    data-due-date="${task.DueDate || ''}"
-                                                >
+                                            <div style="position: relative;">
+                                                <button class="edit-task-btn" type="button">
                                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                                        <circle cx="12" cy="12" r="1" />
+                                                        <circle cx="12" cy="5" r="1" />
+                                                        <circle cx="12" cy="19" r="1" />
                                                     </svg>
-                                                    Editar
-                                                </div>
-                                                <div class="task-menu-separator"></div>
-                                                <div class="task-menu-item" onclick="handleDeleteTask(event, ${task.Id})">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                        <path d="M3 6h18"></path>
-                                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
-                                                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                                    </svg>
-                                                    Excluir
+                                                </button>
+                                                <div class="task-menu">
+                                                    <div class="task-menu-item edit-task" 
+                                                        data-column-id="${col.Id}"
+                                                        data-task-id="${task.Id}"
+                                                        data-title="${task.Title}"
+                                                        data-description="${task.Description || ''}"
+                                                        data-priority="${task.Priority || 1}"
+                                                        data-due-date="${task.DueDate || ''}"
+                                                    >
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                        </svg>
+                                                        Editar
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -231,6 +229,45 @@ async function renderBoards(boardsToShow) {
                     });
                 }
                 
+                // Após renderizar o conteúdo
+                document.querySelectorAll('.edit-task-btn').forEach(button => {
+                    button.onclick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Fecha todos os outros menus
+                        document.querySelectorAll('.task-menu.active').forEach(menu => {
+                            if (menu !== button.nextElementSibling) {
+                                menu.classList.remove('active');
+                            }
+                        });
+                        
+                        // Toggle do menu atual
+                        const menu = button.nextElementSibling;
+                        menu.classList.toggle('active');
+                    };
+                });
+                
+                document.querySelectorAll('.edit-task').forEach(item => {
+                    item.onclick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const columnId = item.dataset.columnId;
+                        const taskId = item.dataset.taskId;
+                        handleManageTask(e, columnId, taskId);
+                    };
+                });
+                
+                // Fecha o menu quando clicar fora
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.edit-task-btn') && !e.target.closest('.task-menu')) {
+                        document.querySelectorAll('.task-menu.active').forEach(menu => {
+                            menu.classList.remove('active');
+                        });
+                    }
+                });
+                
             } catch (error) {
                 console.error('Erro ao carregar conteúdo do quadro:', error);
             }
@@ -290,3 +327,8 @@ document.addEventListener('boardsUpdated', () => {
 
 // E torne a função loadBoards acessível para outros módulos
 export { loadBoards };
+
+// Tornar as funções disponíveis globalmente
+window.handleManageTask = handleManageTask;
+window.handleTaskMenu = handleTaskMenu;
+window.handleDeleteTask = handleDeleteTask;

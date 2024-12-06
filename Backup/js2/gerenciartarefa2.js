@@ -1,36 +1,45 @@
 import requests from './api.js';
 
-window.handleManageTask = async function(event, columnId, taskId = null) {
+export async function handleManageTask(event, columnId, taskId = null) {
     event.preventDefault();
     event.stopPropagation();
 
-    const overlay = document.getElementById('gerenciarTarefaOverlay');
-    const titleElement = document.getElementById('gerenciarTarefaTitle');
-    const closeBtn = document.getElementById('closeGerenciarTarefaBtn');
-    const cancelBtn = document.getElementById('cancelGerenciarTarefaBtn');
-    const saveBtn = document.getElementById('saveTaskBtn');
-    const deleteBtn = document.getElementById('deleteTaskBtn');
-    const titleInput = document.getElementById('taskTitle');
-    const descriptionInput = document.getElementById('taskDescription');
-    const prioritySelect = document.getElementById('taskPriority');
-    const dueDateInput = document.getElementById('taskDueDate');
-
-    const closePopup = () => {
-        overlay.style.display = 'none';
-        overlay.classList.remove('active');
-        titleInput.value = '';
-        descriptionInput.value = '';
-        prioritySelect.value = '1';
-        dueDateInput.value = '';
+    // Captura todos os elementos necessários
+    const elements = {
+        overlay: document.getElementById('gerenciarTarefaOverlay'),
+        titleElement: document.getElementById('gerenciarTarefaTitle'),
+        closeBtn: document.getElementById('closeGerenciarTarefaBtn'),
+        cancelBtn: document.getElementById('cancelGerenciarTarefaBtn'),
+        saveBtn: document.getElementById('saveTaskBtn'),
+        titleInput: document.getElementById('taskTitle'),
+        descriptionInput: document.getElementById('taskDescription'),
+        prioritySelect: document.getElementById('taskPriority'),
+        dueDateInput: document.getElementById('taskDueDate')
     };
 
-    closeBtn.onclick = closePopup;
-    cancelBtn.onclick = closePopup;
+    // Verifica se todos os elementos foram encontrados
+    for (const [key, element] of Object.entries(elements)) {
+        if (!element) {
+            console.error(`Elemento ${key} não encontrado`);
+            return;
+        }
+    }
+
+    const closePopup = () => {
+        elements.overlay.style.display = 'none';
+        elements.overlay.classList.remove('active');
+        elements.titleInput.value = '';
+        elements.descriptionInput.value = '';
+        elements.prioritySelect.value = '1';
+        elements.dueDateInput.value = '';
+    };
+
+    elements.closeBtn.onclick = closePopup;
+    elements.cancelBtn.onclick = closePopup;
 
     // Se tiver taskId, é edição
     if (taskId && taskId > 0) {
-        titleElement.textContent = 'Editar Tarefa';
-        deleteBtn.style.display = 'flex';
+        elements.titleElement.textContent = 'Editar Tarefa';
         
         try {
             const taskElement = event.target.closest('.task-menu-item');
@@ -41,39 +50,21 @@ window.handleManageTask = async function(event, columnId, taskId = null) {
                 DueDate: taskElement.dataset.dueDate
             };
 
-            titleInput.value = taskData.Title;
-            descriptionInput.value = taskData.Description;
-            prioritySelect.value = taskData.Priority;
-            dueDateInput.value = taskData.DueDate ? taskData.DueDate.split('T')[0] : '';
+            elements.titleInput.value = taskData.Title;
+            elements.descriptionInput.value = taskData.Description;
+            elements.prioritySelect.value = taskData.Priority;
+            elements.dueDateInput.value = taskData.DueDate ? taskData.DueDate.split('T')[0] : '';
         } catch (error) {
             console.error('Erro ao carregar dados da tarefa:', error);
             closePopup();
             return;
         }
     } else {
-        titleElement.textContent = 'Nova Tarefa';
-        deleteBtn.style.display = 'none';
+        elements.titleElement.textContent = 'Nova Tarefa';
     }
 
-    deleteBtn.onclick = async () => {
-        if (confirm('Tem certeza que deseja excluir esta tarefa?')) {
-            try {
-                await requests.DeleteTask(taskId);
-                closePopup();
-                
-                const activeBoard = document.querySelector('.board-item.active');
-                if (activeBoard) {
-                    activeBoard.click();
-                }
-            } catch (error) {
-                console.error('Erro ao excluir tarefa:', error);
-                alert('Erro ao excluir a tarefa');
-            }
-        }
-    };
-
-    saveBtn.onclick = async () => {
-        const title = titleInput.value.trim();
+    elements.saveBtn.onclick = async () => {
+        const title = elements.titleInput.value.trim();
         if (!title) {
             alert('Por favor, insira um título para a tarefa');
             return;
@@ -82,9 +73,9 @@ window.handleManageTask = async function(event, columnId, taskId = null) {
         const taskData = {
             Id: taskId || 0,
             Title: title,
-            Description: descriptionInput.value.trim(),
-            Priority: parseInt(prioritySelect.value),
-            DueDate: dueDateInput.value,
+            Description: elements.descriptionInput.value.trim(),
+            Priority: parseInt(elements.prioritySelect.value),
+            DueDate: elements.dueDateInput.value,
             ColumnId: parseInt(columnId),
             IsActive: true
         };
@@ -108,12 +99,13 @@ window.handleManageTask = async function(event, columnId, taskId = null) {
         }
     };
 
-    overlay.style.display = 'flex';
-    overlay.classList.add('active');
-    titleInput.focus();
-};
+    // Exibe o popup apenas se todos os elementos foram encontrados
+    elements.overlay.style.display = 'flex';
+    elements.overlay.classList.add('active');
+    elements.titleInput.focus();
+}
 
-window.handleTaskMenu = function(event, button) {
+export function handleTaskMenu(event, button) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -137,9 +129,9 @@ window.handleTaskMenu = function(event, button) {
     };
 
     document.addEventListener('click', closeMenu);
-};
+}
 
-window.handleDeleteTask = async function(event, taskId) {
+export async function handleDeleteTask(event, taskId) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -156,4 +148,4 @@ window.handleDeleteTask = async function(event, taskId) {
             alert('Erro ao excluir a tarefa');
         }
     }
-}; 
+}

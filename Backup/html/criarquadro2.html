@@ -1,28 +1,43 @@
-<div class="popup-overlay" id="popupOverlay">
+<div id="editarColunaOverlay" class="popup-overlay">
     <div class="popup-content">
-        <h2>Criar Novo Quadro</h2>
-        <input type="text" id="boardName" placeholder="Nome do Quadro">
-        <textarea id="boardDescription" placeholder="Descrição (opcional)"></textarea>
-
-        <div class="color-picker-container">
-            <div class="color-picker">
-                <h3>Escolha uma cor para o quadro</h3>
-                <div class="color-options">
-                    <button class="color-option" data-color="#6C63FF" style="background-color: #6C63FF"></button>
-                    <button class="color-option" data-color="#FF6B6B" style="background-color: #FF6B6B"></button>
-                    <button class="color-option" data-color="#4ECB71" style="background-color: #4ECB71"></button>
-                    <button class="color-option" data-color="#FFA94D" style="background-color: #FFA94D"></button>
-                    <button class="color-option" data-color="#845EF7" style="background-color: #845EF7"></button>
-                    <button class="color-option custom-color" style="width: 36px; height: 36px;">
-                        <input type="color" id="colorPicker" value="#6C63FF" style="width: 100%; height: 100%;">
-                    </button>
-                </div>
+        <div class="popup-header">
+            <h2>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Editar Coluna
+            </h2>
+            <button id="closeEditarColunaBtn" class="close-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18"></path>
+                    <path d="M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="popup-body">
+            <div class="form-group">
+                <label for="columnName">Nome da Coluna</label>
+                <input type="text" id="columnName" class="form-input" placeholder="Digite o nome da coluna" required>
+                <small class="form-help">O nome ajuda a identificar o propósito desta coluna no quadro.</small>
             </div>
         </div>
-
-        <div class="popup-buttons">
-            <button id="createBoardBtn">Criar</button>
-            <button id="closePopupBtn">Cancelar</button>
+        <div class="popup-footer">
+            <button id="cancelEditColumnBtn" class="secondary-button">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18"></path>
+                    <path d="M6 6l12 12"></path>
+                </svg>
+                Cancelar
+            </button>
+            <button id="saveColumnBtn" class="primary-button">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                Salvar
+            </button>
         </div>
     </div>
 </div> 

@@ -911,3 +911,56 @@ body.dark .task-menu-item:hover {
 body.dark .edit-task-btn:hover {
     background: rgba(255, 255, 255, 0.05);
 }
+
+.board-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.delete-board-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 2px solid #ef4444;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.delete-board-btn:hover {
+    background-color: #ef4444;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.delete-board-btn svg {
+    transition: transform 0.2s ease;
+    stroke: currentColor;
+    stroke-width: 2.5;
+}
+
+.delete-board-btn:hover svg {
+    transform: scale(1.1);
+}
+
+/* Tema escuro */
+body.dark .delete-board-btn {
+    background-color: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+    color: #ef4444;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+body.dark .delete-board-btn:hover {
+    background-color: #ef4444;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
